@@ -1,0 +1,165 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.britebill</groupId>
+	<artifactId>simple-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<properties>
+		<skipTests>false</skipTests>
+		<skipITs>${skipTests}</skipITs>
+		<skipUTs>${skipTests}</skipUTs>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+	</properties>
+
+
+	<build>
+		<finalName>simpleapi</finalName>
+
+		<plugins>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.13</version>
+				<configuration>
+					<skipTests>${skipTests}</skipTests>
+					<skipITs>${skipITs}</skipITs>
+					<environmentVariables>
+						<tomcat.port>${tomcat.http.port}</tomcat.port>
+					</environmentVariables>
+					<forkedProcessTimeoutInSeconds>20</forkedProcessTimeoutInSeconds>
+					<includes>
+						<include>**/*IntegrationTest.java</include>
+					</includes>
+				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skipTests>${skipUTs}</skipTests>
+					<excludes>
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version> <!-- The released version 2 has a bug preventing this from working https://issues.apache.org/jira/browse/MTOMCAT-175 -->
+				<configuration>
+					<!-- http port -->
+					<port>${tomcat.http.port}</port>
+					<!-- application path always starts with / -->
+					<path>/</path>
+					<!-- optional path to a context file -->
+					<contextFile>src/main/webapp/META-INF/context.xml</contextFile>
+					<!-- optional system propoerties you want to add <systemProperties> 
+						<appserver.base>/scratch/jenkins/workspace/tomcat-maven-plugin-site-deploy/target/appserver-base</appserver.base> 
+						<java.io.tmpdir>/scratch/jenkins/workspace/tomcat-maven-plugin-site-deploy/target</java.io.tmpdir> 
+						</systemProperties -->
+					<!-- if you want to use test dependencies rather than only runtime -->
+					<useTestClasspath>false</useTestClasspath>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-tomcat</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>run-war-only</goal>
+						</goals>
+						<configuration>
+							<fork>true</fork>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-tomcat</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>shutdown</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.17</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!-- Reserve a port for tomcat to use so that if Jenkins ever runs these 
+				tests in parallel on the same slave they wont conflict -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>reserve-network-port</id>
+						<goals>
+							<goal>reserve-network-port</goal>
+						</goals>
+						<phase>pre-integration-test</phase>
+						<configuration>
+							<portNames>
+								<portName>tomcat.http.port</portName>
+							</portNames>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>britebill-proxy</id>
+			<name>Britebill Repository for Third-Party Dependencies</name>
+			<url>http://repo.britebill.com/nexus/content/repositories/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>

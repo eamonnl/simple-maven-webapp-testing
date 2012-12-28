@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.5"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<distributable />
+
+	<display-name>rest-api</display-name>
+	<description>RESTful web services API</description>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:META-INF/spring/britebill-rest-context.xml
+					 classpath*:META-INF/spring/security/security-context.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Configure Spring Request Context Listener for Spring to use request 
+		scope for Spring beans -->
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Handles Jersey requests -->
+	<servlet>
+		<servlet-name>Jersey Spring Web Application</servlet-name>
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+		
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.britebill.api.v2</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
+
+		<!-- GZIP compression if client supports it (important for mobile) -->
+		<init-param>
+			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+			<param-value>com.sun.jersey.api.container.filter.GZIPContentEncodingFilter</param-value>
+		</init-param>
+
+		<!-- Apply JSR250 annotations - Make sure Spring is not doing this as well -->
+		<init-param>
+			<param-name>com.sun.jersey.spi.container.ResourceFilters</param-name>
+			<param-value>com.sun.jersey.api.container.filter.RolesAllowedResourceFilterFactory</param-value>
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Jersey Spring Web Application</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+
+	<resource-ref>
+		<res-ref-name>jdbc/britebill</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+
+	<resource-ref>
+		<res-ref-name>jdbc/britebill_audit</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+
+	<resource-env-ref>
+		<description>Connection Pool</description>
+		<resource-env-ref-name>jdbc/britebill</resource-env-ref-name>
+		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+	</resource-env-ref>
+
+	<resource-env-ref>
+		<description>Connection Pool</description>
+		<resource-env-ref-name>jdbc/britebill_audit</resource-env-ref-name>
+		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+	</resource-env-ref>
+
+</web-app>
