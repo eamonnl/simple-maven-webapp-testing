@@ -1,4 +1,4 @@
-package com.britebill.it;
+package com.eamonnl;
 
 import org.junit.Test;
 

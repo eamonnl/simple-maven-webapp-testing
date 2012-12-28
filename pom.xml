@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.britebill</groupId>
-	<artifactId>simple-api</artifactId>
+	<groupId>com.eamonnl</groupId>
+	<artifactId>testing-example</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
@@ -10,10 +10,6 @@
 		<skipTests>false</skipTests>
 		<skipITs>${skipTests}</skipITs>
 		<skipUTs>${skipTests}</skipUTs>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 	</properties>
 
 
@@ -21,7 +17,6 @@
 		<finalName>simpleapi</finalName>
 
 		<plugins>
-
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -65,18 +60,14 @@
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat6-maven-plugin</artifactId>
-				<version>2.1-SNAPSHOT</version> <!-- The released version 2 has a bug preventing this from working https://issues.apache.org/jira/browse/MTOMCAT-175 -->
+				<!-- The released version 2 has a bug preventing this from working https://issues.apache.org/jira/browse/MTOMCAT-175 -->
+				<version>2.1-SNAPSHOT</version> 
 				<configuration>
 					<!-- http port -->
 					<port>${tomcat.http.port}</port>
 					<!-- application path always starts with / -->
 					<path>/</path>
-					<!-- optional path to a context file -->
 					<contextFile>src/main/webapp/META-INF/context.xml</contextFile>
-					<!-- optional system propoerties you want to add <systemProperties> 
-						<appserver.base>/scratch/jenkins/workspace/tomcat-maven-plugin-site-deploy/target/appserver-base</appserver.base> 
-						<java.io.tmpdir>/scratch/jenkins/workspace/tomcat-maven-plugin-site-deploy/target</java.io.tmpdir> 
-						</systemProperties -->
 					<!-- if you want to use test dependencies rather than only runtime -->
 					<useTestClasspath>false</useTestClasspath>
 				</configuration>
@@ -134,11 +125,7 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-		</dependency>
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -150,9 +137,9 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>britebill-proxy</id>
-			<name>Britebill Repository for Third-Party Dependencies</name>
-			<url>http://repo.britebill.com/nexus/content/repositories/public</url>
+			<id>apache-snapshots</id>
+			<name>Apache Snapshots</name>
+			<url>http://repository.apache.org/snapshots/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
